@@ -1,0 +1,148 @@
+<script src="https://cdn.bootcss.com/jquery.form/4.2.1/jquery.form.min.js"></script>
+
+<div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">添加订单</h4>
+        </div>
+
+        <div class="modal-body">
+            <form class="row" id="_form">
+                <div class="form-group col-md-12">
+                    <label class="" for="createAt">日期</label>
+                    <input type="date" class="form-control" name="createAt" id="createAt" placeholder="日期">
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="" for="fromArea">地区</label>
+                    <input type="text" class="form-control" name="fromArea" id="fromArea" placeholder="地区" data-toggle="popover">
+                </div>
+                <div class="form-group col-md-6">
+                    <input type="hidden" id="uid">
+                    <label class="" for="uName">人员</label>
+                    <input type="text" class="form-control" name="uName" id="uName" placeholder="人员" data-toggle="popover">
+                </div>
+                <div class="form-group col-md-12">
+                    <label class="" for="pname">商品</label>
+                    <input type="text" class="form-control" id="pname" placeholder="商品名称" data-toggle="popover">
+                </div>
+                <div class="form-group row col-md-12">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon" id="sizing-addon1">生三七粉</span>
+                            <span class="input-group-btn">
+                                  <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-minus"></span></button>
+                                </span>
+                            <input type="number" class="form-control" placeholder="数量">
+                            <span class="input-group-btn">
+                                  <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-plus"></span></button>
+                                </span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="" for="endDate">奖金</label>
+                    <input type="number" class="form-control" name="endDate" id="endDate" placeholder="奖金">
+                </div>
+            </form>
+        </div>
+
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="_submit" class="btn btn-primary">保存</button>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<script>
+
+    $(function () {
+        // var vm = new Vue({
+        //     el: '#_form',
+        //     data: {
+        //         areas: "",
+        //         uNames: ""
+        //     },
+        //     watch: {
+        //         areas: function (val) {
+        //             console.log(val)
+        //             var html = "";
+        //             jQuery.each(val, function(i, v) {
+        //                 html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
+        //             });
+        //             $("#fromArea").attr("data-content", html);
+        //         },
+        //         uNames: function (val) {
+        //             console.log(val)
+        //         }
+        //     }
+        //
+        // });
+
+        $("#fromArea").popover({
+            placement: "auto",
+            trigger: "focus",
+            html: true,
+            content: "<div id='fromArea_div'></div>"
+        });
+
+        $('#fromArea').on('show.bs.popover', function () {
+            getArea();
+        });
+        $("#uName").popover({
+            placement: "auto",
+            trigger: "focus",
+            html: true,
+            content: "<div id='uName_div'></div>"
+        });
+
+        $('#uName').on('show.bs.popover', function () {
+            getUname();
+        });
+        var flag = false;
+        var timer;
+        //键盘监听事件
+        $('#fromArea').keydown(function () {
+            clearTimeout(timer);
+            flag = true;
+            timer = setTimeout(function () {
+                flag = false;
+                getArea();
+            }, 500);
+        });
+        $('#uName').keydown(function () {
+            clearTimeout(timer);
+            flag = true;
+            timer = setTimeout(function () {
+                flag = false;
+                getUname();
+            }, 500);
+        });
+        /**
+         * 提交方法
+         */
+        $("#_submit").on("click",function () {
+            $("#_form").ajaxSubmit({
+                url: "/order/save",
+                dataType: "json",
+                type: "put",
+                success: function (data) {
+                    if (data.code == "0") {
+                        alert("操作成功！");
+                        $('#myModal').modal("hide");
+                    } else {
+                        alert("操作失败：" + data.msg);
+                    }
+                }
+            })
+
+        })
+    });
+
+
+
+
+
+</script>

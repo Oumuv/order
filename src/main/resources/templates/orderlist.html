@@ -1,0 +1,110 @@
+<div class="btn-group">
+    <button type="button" class="btn btn-success" onclick="add()">添加</button>
+</div>
+
+<table class="table table-striped table-hover" xmlns:th="http://www.w3.org/1999/xhtml">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>日期</th>
+        <th>地区</th>
+        <th>人员</th>
+        <th>商品订单</th>
+        <th>奖金</th>
+        <th>状态</th>
+    </tr>
+    </thead>
+    <tr th:each="i:${items}">
+        <td th:text="${items.createAt}"></td>
+        <td th:text="${i.person.fromArea}"></td>
+        <td th:text="${i.person.uName}"></td>
+        <td th:text="${i.count}"></td>
+        <td th:text="${i.count}"></td>
+        <td th:text="${i.count}"></td>
+        <td th:text="${i.deleted}"></td>
+    </tr>
+</table>
+
+<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"></div>
+<script>
+    function add() {
+        $('#myModal').load("/order/add",function(){
+            $('#myModal').modal({keyboard: true});
+        })
+    }
+
+    function dele(id) {
+        $.ajax({
+            type: 'delete',
+            url: '/order/delete/'+id,
+            success: function(data){
+                if (data.code == "0") {
+                    alert("操作成功！");
+                } else {
+                    alert("操作失败：" + data.page);
+                }
+            }
+        });
+    }
+
+    function updata(id) {
+        $('#myModal').load("/order/updata/"+id,function(){
+            $('#myModal').modal({keyboard: true});
+        })
+    }
+
+    /**
+     * 地区选择
+     * @param obj
+     */
+    function selectFromArea(obj) {
+        $("#fromArea").val($(obj).html())
+        $("#fromArea").popover("hide");
+    }
+
+    function getArea() {
+        $.get({
+            url: '/person/findarea',
+            data: {
+                fromArea: $("#fromArea").val()
+            },
+            success: function (data) {
+                var html = "";
+                jQuery.each(data.page, function(i, v) {
+                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
+                });
+                $("#fromArea_div").html(html);
+            }
+        });
+    }
+
+
+    /**
+     * 人员选择
+     * @param obj
+     */
+    function selectUname(obj, id, fromArea, uName) {
+        $("#uid").val(id)
+        $("#fromArea").val(fromArea)
+        $("#uName").val(uName)
+        $("#uName").popover("hide");
+    }
+
+    function getUname() {
+        $.get({
+            url: '/person/find',
+            data: {
+                fromArea: $("#fromArea").val(),
+                uname: $("#uName").val()
+            },
+            success: function (data) {
+                var html = "";
+                jQuery.each(data.page, function(i, v) {
+                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick=\"selectUname(this,'" + v.id + "','" + v.fromArea + "','" + v.uName + "')\">" + v.fromArea + v.uName + "</button>&nbsp;";
+                });
+                $("#uName_div").html(html);
+            }
+        });
+    }
+
+</script>
