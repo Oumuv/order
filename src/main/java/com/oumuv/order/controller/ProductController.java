@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 /***
  *<pre>
@@ -76,13 +77,21 @@ public class ProductController extends AbstractController{
             } else {
                 entity.setUpdateAt(new Date());
             }
-            return new Page(productService.save(entity));
+            ProductEntity save = productService.save(entity);
+            return new Page(save);
         }catch (Exception e){
             e.printStackTrace();
             return new Page(e,"500","保存失败");
         }
     }
 
+    @GetMapping("findall")
+    @ResponseBody
+    @ApiOperation(value = "查询所有有效的商品")
+    public Page getList(@RequestParam(value = "pname",required = false)String pname) {
+        Set<ProductEntity> allFN = productService.findAllFN(pname, new Date());
+        return new Page(allFN);
+    }
 
 
 }

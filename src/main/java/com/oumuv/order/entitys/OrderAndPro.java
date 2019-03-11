@@ -15,11 +15,11 @@ import javax.persistence.*;
 @Table(name = "order_product")
 public class OrderAndPro extends BaseEntity{
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
-    @JoinColumn(name = "oid")
-    private OrderEntity oid;
+//    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+//    @JoinColumn(name = "oid")
+//    private OrderEntity oid;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     private ProductEntity pid;
     private int quantity;//数量
@@ -40,11 +40,11 @@ public class OrderAndPro extends BaseEntity{
         this.quantity = quantity;
     }
 
-    public OrderEntity getOid() {
-        return oid;
-    }
-
-    public void setOid(OrderEntity oid) {
-        this.oid = oid;
-    }
+//    public OrderEntity getOid() {
+//        return oid;
+//    }
+//
+//    public void setOid(OrderEntity oid) {
+//        this.oid = oid;
+//    }
 }

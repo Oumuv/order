@@ -1,5 +1,6 @@
 package com.oumuv.order.entitys;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +35,13 @@ public class ProductEntity extends PojoEntity{
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date endDate;//结束时间
+
+    public ProductEntity(Long id) {
+        this.setId(id);
+    }
+
+    public ProductEntity() {
+    }
 
     public String getPname() {
         return pname;

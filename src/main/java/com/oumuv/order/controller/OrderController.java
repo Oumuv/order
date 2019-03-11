@@ -1,20 +1,22 @@
 package com.oumuv.order.controller;
 
 import com.oumuv.order.commons.Page;
+import com.oumuv.order.entitys.OrderAndPro;
 import com.oumuv.order.entitys.OrderEntity;
+import com.oumuv.order.entitys.Person;
 import com.oumuv.order.entitys.ProductEntity;
 import com.oumuv.order.service.OrderService;
+import com.oumuv.order.service.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /***
  *<pre>
@@ -32,9 +34,15 @@ public class OrderController extends AbstractController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private PersonService personService;
+
 
     @GetMapping("orderlist")
     public String orderlist(ModelMap map) {
+        Sort sort = new Sort(Sort.Direction.ASC,"createAt");
+//        Pageable pageable = new PageRequest(0, 5, sort);
+//        Pageable pageable1 = new QPageRequest()
         Iterable<OrderEntity> all = orderService.findAll();
         map.put("items", all);
         return "orderlist";
@@ -67,24 +75,32 @@ public class OrderController extends AbstractController {
         }
     }
 
-    @PutMapping("/save")
+    @RequestMapping("/save")
     @ResponseBody
     @ApiOperation(value ="保存订单")
-    public Page save(OrderVO entity ) {
-        int t = 0;
+    public Page save(OrderVO vo ) {
+        OrderEntity orderEntity = vo.getOrderEntity();
+        Person person;
+        Long uid = vo.getUid();
+        if (uid != null) {//不为空
+            person = personService.findById(uid).get();
+        } else {
+            person = new Person(vo.getuName(), vo.getFromArea());
+        }
+
+        orderEntity.setPerson(person);
         try {
-            if (null == entity.getId()) {
+            if (null == orderEntity.getId()) {
 //                entity.setCreateAt(new Date());
             } else {
 //                entity.setUpdateAt(new Date());
             }
-            return new Page(/*orderService.save(entity)*/);
+            return new Page(orderService.save(orderEntity));
         }catch (Exception e){
             e.printStackTrace();
             return new Page(e,"500","保存失败");
         }
     }
-
 
     /**
      * 订单VO
@@ -95,6 +111,7 @@ public class OrderController extends AbstractController {
         private String fromArea;//地区
 
         private Long id;
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
         private Date createAt;
         private Boolean deleted;
         private Double award;//奖励金额
@@ -103,8 +120,44 @@ public class OrderController extends AbstractController {
 
         private Map<ProductEntity, Integer> pros = new HashMap<>();
 
-        private Map<String, Integer> map = new HashMap<>();//k:proID,v:count
+        List<Integer> pids;
 
+        List<Integer> counts;
+
+        public OrderEntity getOrderEntity() {
+            orderEntity = new OrderEntity();
+
+            orderEntity.setAward(award);
+            orderEntity.setCreateAt(createAt);
+
+            Set<OrderAndPro> orderAndProList = new HashSet<>();
+            int index = 0;
+            for (Integer id : pids) {
+                OrderAndPro oap = new OrderAndPro();
+//                oap.setOid(orderEntity);
+                oap.setPid(new ProductEntity(id.longValue()));
+                oap.setQuantity(counts.get(index++));
+                orderAndProList.add(oap);
+            }
+            orderEntity.setProducts(orderAndProList);
+            return orderEntity;
+        }
+
+        public List<Integer> getPids() {
+            return pids;
+        }
+
+        public void setPids(List<Integer> pids) {
+            this.pids = pids;
+        }
+
+        public List<Integer> getCounts() {
+            return counts;
+        }
+
+        public void setCounts(List<Integer> counts) {
+            this.counts = counts;
+        }
 
         public Long getUid() {
             return uid;
@@ -162,10 +215,6 @@ public class OrderController extends AbstractController {
             this.award = award;
         }
 
-        public OrderEntity getOrderEntity() {
-            return orderEntity;
-        }
-
         public void setOrderEntity(OrderEntity orderEntity) {
             this.orderEntity = orderEntity;
         }
@@ -176,14 +225,6 @@ public class OrderController extends AbstractController {
 
         public void setPros(Map<ProductEntity, Integer> pros) {
             this.pros = pros;
-        }
-
-        public Map<String, Integer> getMap() {
-            return map;
-        }
-
-        public void setMap(Map<String, Integer> map) {
-            this.map = map;
         }
     }
 
