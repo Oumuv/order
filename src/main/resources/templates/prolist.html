@@ -26,7 +26,6 @@
         <td><span th:onclick="dele([[${item.id}]])">删除</span>&nbsp;<span th:onclick="updata([[${item.id}]])">修改</span></td>
     </tr>
 </table>
-<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"></div>
 <script>
     function add() {
         $('#myModal').load("/product/add",function(){
@@ -53,6 +52,22 @@
         $('#myModal').load("/product/updata/"+id,function(){
             $('#myModal').modal({keyboard: true});
         })
+    }
+
+    function getPname() {
+        $.get({
+            url: '/product/findall',
+            data: {
+                pname: $("#pname").val()
+            },
+            success: function (data) {
+                var html = "";
+                jQuery.each(data.page, function(i, v) {
+                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" >" + v.pname + "</button>&nbsp;";
+                });
+                $("#pname_div").html(html);
+            }
+        });
     }
 
 </script>

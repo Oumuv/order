@@ -11,7 +11,7 @@
             <form class="" id="_form">
                 <div class="form-group">
                     <label class="sr-only" for="pname">商品名称</label>
-                    <input type="text" class="form-control" name="pname" id="pname" placeholder="商品名称">
+                    <input type="text" class="form-control" name="pname" id="pname" placeholder="商品名称" data-toggle="popover">
                 </div>
                 <div class="form-group">
                     <label class="sr-only" for="price">价格</label>
@@ -41,7 +41,7 @@
 </div><!-- /.modal-dialog -->
 
 <script>
-    $("#_submit").on("click",function () {
+    $("#_submit").on("click", function () {
         // var data = $("#_form").serialize();
         // console.log(data)
         $("#_form").ajaxSubmit({
@@ -53,11 +53,36 @@
                 if (data.code == "0") {
                     alert("操作成功！");
                     $('#myModal').modal("hide");
+                    $(".content_div").load("/product/prolist");
                 } else {
                     alert("操作失败：" + data.page);
                 }
             }
         })
 
+    });
+    var flag = false;
+    var timer;
+    //键盘监听事件
+    $(function () {
+        $("#pname").popover({
+            placement: "auto",
+            trigger: "focus",
+            html: true,
+            content: "<div id='pname_div'></div>"
+        });
+
+        $('#pname').on('show.bs.popover', function () {
+            getPname();
+        });
+
+        $('#pname').keydown(function () {
+            clearTimeout(timer);
+            flag = true;
+            timer = setTimeout(function () {
+                flag = false;
+                getPname();
+            }, 500);
+        });
     })
 </script>

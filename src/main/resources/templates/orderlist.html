@@ -15,17 +15,20 @@
     </tr>
     </thead>
     <tr th:each="i:${items}">
-        <td th:text="${items.createAt}"></td>
+        <td th:text="${iStat.count}"></td>
+        <td th:text="${i.createAt}"></td>
         <td th:text="${i.person.fromArea}"></td>
         <td th:text="${i.person.uName}"></td>
-        <td th:text="${i.count}"></td>
-        <td th:text="${i.count}"></td>
-        <td th:text="${i.count}"></td>
+        <td>
+            <span th:each="p:${i.products}">
+                <span th:text="${p.pid.pname}+'/'+${p.quantity}"></span>&nbsp;
+            </span>
+        </td>
+        <td th:text="${i.award}"></td>
         <td th:text="${i.deleted}"></td>
     </tr>
 </table>
 
-<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"></div>
 <script>
     function add() {
         $('#myModal').load("/order/add",function(){
@@ -74,6 +77,29 @@
                     html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
                 });
                 $("#fromArea_div").html(html);
+            }
+        });
+    }
+
+    function selectPname(obj,id,pname,award) {
+        $("#pname").val(pname);
+        $("#_award").val(award);
+        $("#h_pid").val(id);
+        $("#pname").popover("hide");
+    }
+
+    function getPname() {
+        $.get({
+            url: '/product/findall',
+            data: {
+                pname: $("#pname").val()
+            },
+            success: function (data) {
+                var html = "";
+                jQuery.each(data.page, function(i, v) {
+                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick=\"selectPname(this,'" + v.id + "','" + v.pname +"','" + v.award + "')\">" + v.pname + "</button>&nbsp;";
+                });
+                $("#pname_div").html(html);
             }
         });
     }

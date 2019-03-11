@@ -18,32 +18,43 @@
                     <input type="text" class="form-control" name="fromArea" id="fromArea" placeholder="地区" data-toggle="popover">
                 </div>
                 <div class="form-group col-md-6">
-                    <input type="hidden" id="uid">
+                    <input type="hidden" name="uid" id="uid">
                     <label class="" for="uName">人员</label>
                     <input type="text" class="form-control" name="uName" id="uName" placeholder="人员" data-toggle="popover">
                 </div>
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-12 ">
                     <label class="" for="pname">商品</label>
-                    <input type="text" class="form-control" id="pname" placeholder="商品名称" data-toggle="popover">
+                    <div class="input-group">
+                        <input type="hidden" id="h_pid">
+                        <input type="hidden" id="_award">
+                        <input type="text" class="form-control" id="pname" placeholder="商品名称" data-toggle="popover">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" id="btn_addpro">添加</button>
+                        </span>
+                    </div>
                 </div>
-                <div class="form-group row col-md-12">
-                    <div class="col-md-6">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-addon" id="sizing-addon1">生三七粉</span>
-                            <span class="input-group-btn">
+                <div class="form-group row col-md-12 " id="_prolist">
+
+                    <div class="col-md-6 " v-for="item in proList">
+                        <div class="input-group input-group-sm _pro_div">
+                            <span class="input-group-addon">{{item.name}}</span>
+                            <input type="hidden" class="_pid" :value="item.id">
+                            <input type="hidden" class="_pname" :value="item.name">
+                            <span class="input-group-btn"  @click="proMinus(item.id)" :id="'pid_'+item.id">
                                   <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-minus"></span></button>
-                                </span>
-                            <input type="number" class="form-control" placeholder="数量">
-                            <span class="input-group-btn">
+                            </span>
+
+                            <input type="number" class="form-control _pcount" :value="item.count" placeholder="数量">
+                            <span class="input-group-btn"  @click="proAdd(item.id)">
                                   <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-plus"></span></button>
-                                </span>
+                            </span>
                         </div>
                     </div>
 
                 </div>
                 <div class="form-group col-md-6">
-                    <label class="" for="endDate">奖金</label>
-                    <input type="number" class="form-control" name="endDate" id="endDate" placeholder="奖金">
+                    <label class="" for="award">奖金</label>
+                    <input type="number" class="form-control" name="award" :value="award" id="award" placeholder="奖金">
                 </div>
             </form>
         </div>
@@ -59,27 +70,80 @@
 <script>
 
     $(function () {
-        // var vm = new Vue({
-        //     el: '#_form',
-        //     data: {
-        //         areas: "",
-        //         uNames: ""
-        //     },
-        //     watch: {
-        //         areas: function (val) {
-        //             console.log(val)
-        //             var html = "";
-        //             jQuery.each(val, function(i, v) {
-        //                 html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
-        //             });
-        //             $("#fromArea").attr("data-content", html);
-        //         },
-        //         uNames: function (val) {
-        //             console.log(val)
-        //         }
-        //     }
-        //
-        // });
+
+        var vm = new Vue({
+            el: '#_form',
+            data: {
+                proList: []
+            },
+            computed:{
+                award:function () {
+                    var count = 0;
+                    if (this.proList.length >= 0) {
+                        for (var l in this.proList) {
+                            console.log(this.proList[l]);
+                            count = count + (this.proList[l].count * this.proList[l].award);
+                        }
+                        return count;
+                    }
+                }
+            },
+            methods:{
+
+                /**
+                 * 添加商品
+                 */
+                putPro:function () {
+                    var pid = $("#h_pid").val();
+                    var pname = $("#pname").val();
+                    var _award = $("#_award").val();
+                    if (pid != "") {
+                        // if(this.proList.get(pid)!=""&&this.proList.get(pid)!=)
+                        // var list = ;
+                        if (this.proList.length >= 0) {
+                            for (var l in this.proList) {
+                                console.log(this.proList[l]);
+                                if (this.proList[l].id === pid) {//已存在，数量+1
+                                    this.proAdd(pid);
+                                    return;
+                                }
+                            }
+                        }
+                        this.proList.push({id: pid, name: pname,count:1,award:_award});
+                    } else {
+                        alert("请输入商品名称")
+                    }
+                },
+                /**
+                 * 数量加
+                 * */
+                proAdd:function (pid) {
+                    for (var l in this.proList) {
+                        if (this.proList[l].id === pid) {
+                            this.proList[l].count++;
+                        }
+                    }
+                },
+                /**
+                 * 数量减
+                 * */
+                proMinus:function (pid) {
+                    for (var l in this.proList) {
+                        if (this.proList[l].id === pid) {
+                            this.proList[l].count--;
+                            if (this.proList[l].count <= 0) {//数量为0删除了
+                                this.proList.splice(l,1);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var flag = false;
+        var timer;
+        //键盘监听事件
+
 
         $("#fromArea").popover({
             placement: "auto",
@@ -91,6 +155,38 @@
         $('#fromArea').on('show.bs.popover', function () {
             getArea();
         });
+
+        $('#fromArea').keydown(function () {
+            clearTimeout(timer);
+            flag = true;
+            timer = setTimeout(function () {
+                flag = false;
+                getArea();
+            }, 500);
+        });
+        // ------------------------------
+
+        $("#pname").popover({
+            placement: "auto",
+            trigger: "focus",
+            html: true,
+            content: "<div id='pname_div'></div>"
+        });
+
+        $('#pname').on('show.bs.popover', function () {
+            getPname();
+        });
+
+        $('#pname').keydown(function () {
+            clearTimeout(timer);
+            flag = true;
+            timer = setTimeout(function () {
+                flag = false;
+                getPname();
+            }, 500);
+        });
+        // ------------------------------
+
         $("#uName").popover({
             placement: "auto",
             trigger: "focus",
@@ -101,17 +197,7 @@
         $('#uName').on('show.bs.popover', function () {
             getUname();
         });
-        var flag = false;
-        var timer;
-        //键盘监听事件
-        $('#fromArea').keydown(function () {
-            clearTimeout(timer);
-            flag = true;
-            timer = setTimeout(function () {
-                flag = false;
-                getArea();
-            }, 500);
-        });
+
         $('#uName').keydown(function () {
             clearTimeout(timer);
             flag = true;
@@ -120,25 +206,74 @@
                 getUname();
             }, 500);
         });
+
         /**
          * 提交方法
          */
-        $("#_submit").on("click",function () {
+        $("#_submit").on("click", function () {
+
+            var map = getPros();
+            var ids = "";
+            var counts = "";
+            for (var m in map) {
+                ids = ids + map[m].id + ",";
+                counts = counts + map[m].count + ",";
+            }
+
             $("#_form").ajaxSubmit({
                 url: "/order/save",
                 dataType: "json",
-                type: "put",
+                type: "post",
+                data: {
+                    "pids": ids.substring(0,ids.length-1),
+                    "counts": counts.substring(0,counts.length-1)
+                },
                 success: function (data) {
                     if (data.code == "0") {
                         alert("操作成功！");
                         $('#myModal').modal("hide");
+                        $(".content_div").load("/order/orderlist");
                     } else {
                         alert("操作失败：" + data.msg);
                     }
                 }
-            })
+            });
+            // $("#_form").ajaxSubmit();
+        });
 
+
+        function getPros() {
+            var _map = new Map();
+            var result = [];
+
+            $("._pro_div").each(function (index) {
+                var _pid = $(this).find("._pid").val();
+                // var _pname = $(this).find("._pname").val();
+                var _pcount = $(this).find("._pcount").val();
+                _map.set(_pid, _pcount);
+                result.push({id: _pid,count: _pcount});
+
+            });
+            // var obj= Object.create(null);
+            // $("._pro_div").each(function (index) {
+            //     var _pid = $(this).find("._pid").val();
+            //     // var _pname = $(this).find("._pname").val();
+            //     var _pcount = $(this).find("._pcount").val();
+            //     // _map.set(_pid, _pcount);
+            //     obj[_pid] = _pcount;
+            // });
+            return result;
+            // return obj;
+        }
+
+        /**
+         * 添加按钮
+         */
+        $("#btn_addpro").on("click",function () {
+            vm.putPro();
         })
+
+
     });
 
 
