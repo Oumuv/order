@@ -1,6 +1,5 @@
 package com.oumuv.order.service;
 
-import com.oumuv.order.entitys.OrderEntity;
 import com.oumuv.order.entitys.Person;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,7 +11,7 @@ import java.util.Set;
  *<pre>
  *
  *</pre>
- * @interface: ProductService
+ * @interface: PersonService
  * @auther: oyf
  * @date: 2019-03-05 16:56
  * @version : V1.0

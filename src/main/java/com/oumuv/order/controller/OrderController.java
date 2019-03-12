@@ -10,6 +10,8 @@ import com.oumuv.order.service.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -40,10 +42,12 @@ public class OrderController extends AbstractController {
 
     @GetMapping("orderlist")
     public String orderlist(ModelMap map) {
-        Sort sort = new Sort(Sort.Direction.ASC,"createAt");
-//        Pageable pageable = new PageRequest(0, 5, sort);
+        Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createAt");
+        Sort.Order order2 = new Sort.Order(Sort.Direction.DESC, "id");
+        Sort sort = new Sort(order,order2);
+        Pageable pageable = new PageRequest(0, 50, sort);
 //        Pageable pageable1 = new QPageRequest()
-        Iterable<OrderEntity> all = orderService.findAll();
+        Iterable<OrderEntity> all = orderService.findAll(pageable);
         map.put("items", all);
         return "orderlist";
     }

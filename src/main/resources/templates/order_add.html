@@ -1,6 +1,6 @@
 <script src="https://cdn.bootcss.com/jquery.form/4.2.1/jquery.form.min.js"></script>
 
-<div class="modal-dialog modal-md" role="document">
+<div class="modal-dialog modal-md add_div" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -188,10 +188,11 @@
         // ------------------------------
 
         $("#uName").popover({
-            placement: "auto",
+            placement: "bottom",
             trigger: "focus",
             html: true,
-            content: "<div id='uName_div'></div>"
+            content: "<div id='uName_div'></div>",
+            container:'body'
         });
 
         $('#uName').on('show.bs.popover', function () {

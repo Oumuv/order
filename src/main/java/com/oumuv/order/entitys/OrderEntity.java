@@ -32,6 +32,16 @@ public class OrderEntity extends PojoEntity{
 
     private Double award;//奖励金额
 
+    private int status;//奖金发放状态，0：未发放，5已发放
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public Double getAward() {
         return award;
     }

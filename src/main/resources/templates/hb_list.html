@@ -14,58 +14,61 @@
 <!--<link rel="stylesheet" href="/css/style.css"/>-->
 <script src="/js/echarts.js"></script>
 <style>
-    /*大于900px的样式*/
-    @media screen and (min-width: 650px) {
-        .index_div{
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }/*这里是关键*/
 
-            width: 90%;
-        }
-    }
     /*小于600px时的样式*/
     @media screen and (max-width: 600px) {
         .index_div{
-
-            width: 89%;
+            width: 100%;
+            height: 100%;
         }
     }
 
 </style>
+<!--手机端的页面布局-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>主页</title>
+    <title>红包登记列表</title>
 </head>
 <body>
 
-<div class="center-block index_div" style="">
-    <h1 class="title_h">首页</h1>
-    <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="/index">首页</a></li>
-        <li role="presentation" class="" onclick="loadContent(this,'/order/orderlist')"><a href="javascript:void(0)">订单列表</a></li>
-        <li role="presentation" class="" onclick="loadContent(this,'/product/prolist')"><a href="#" >商品管理</a></li>
-        <li role="presentation" class="" onclick="loadContent(this,'/other')"><a href="#">其他</a></li>
-    </ul>
-    <div class="center-block content_div">
+<div class="container-fluid" style="padding: 0px;height: 100%;" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <div class="" style="background: aliceblue;width: 100%;height: 100%;overflow-y:auto;">
+        <p>红包登记</p>
 
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>姓名</th>
+                    <th>奖金</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tr th:each="i:${items}">
+                    <td th:text="${iStat.count}"></td>
+                    <td th:text="${i[1]}+'-'+${i[2]}"></td>
+                    <td th:text="${i[3]}"></td>
+                    <td>
+                        <button type="button" th:onclick="details([[${i[0]}]])">查看</button>
+                    </td>
+                </tr>
+            </table>
     </div>
 </div>
-
 <div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"></div>
 
+
+
 <script>
-
-    $(function () {
-        $(".content_div").load("content");
-
-        $(".index_div .nav-tabs li").on("click", function () {
-            $(".index_div .nav-tabs li").removeClass("active")
-            $(this).addClass("active");
-        });
-    });
-
-    function loadContent(obj,url){
-        $(".title_h").html($(obj).find("a").html())
-        $(".content_div").load(url)
+    function details(id) {
+        $("#myModal").load("/other/hb/detail?id="+id);
     }
 </script>
 </body>

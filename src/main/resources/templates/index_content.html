@@ -1,0 +1,176 @@
+<div class="" style="margin-top: 20px;" xmlns:th="http://www.w3.org/1999/xhtml" >
+    <div class="col-md-8 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>销售排行</h4>
+            </div>
+            <div class="panel-body" >
+                <div id="chart_1" style="width: 100%;height:350px;">>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>商品销售总数（占比）</h4>
+            </div>
+            <div class="panel-body">
+                <div id="chart_2" style="width: 100%;height:350px;">>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>近30天销售记录</h4>
+            </div>
+            <div class="panel-body">
+                <div id="chart_3" style="width: 100%;height:350px;">>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+
+    var data1 = [[${option1_data}]];//商品销售总数量
+    var data2 = [[${option2_data}]];//商品销售总数量
+    var data3 = [[${option3_data}]];//商品销售总数量
+
+    /**
+     * 获取name:?,value:?数据
+     * */
+    function getKV(datas){
+        var map = [];
+        for (var index in datas) {
+            map.push({name:datas[index][0],value:datas[index][1]})
+        }
+        return map;
+    }
+    /**
+     * 获取k
+     * */
+    function getK(datas) {
+        var kname = [];
+        for (var index in datas) {
+            kname.push(datas[index][0])
+        }
+        return kname;
+    }
+
+    /**
+     * 获取v
+     * @param datas
+     * @returns {Array}
+     */
+    function getV(datas) {
+        var kname = [];
+        for (var index in datas) {
+            kname.push(datas[index][1])
+        }
+        return kname;
+    }
+
+    /**
+     * 根据下标获取值
+     * @param datas
+     * @param i 下标
+     * @returns {Array}
+     */
+    function getVByIndex(datas,i) {
+        var kname = [];
+        console.log(datas)
+        for (var index in datas) {
+            kname.push(datas[index][i])
+        }
+        return kname;
+    }
+
+    /**
+     * 拼接
+     * @param datas
+     * @param i1
+     * @param i2
+     * @returns {Array}
+     */
+    function splicByIndexs(datas,i1,i2) {
+        var kname = [];
+        console.log(datas)
+        for (var index in datas) {
+            kname.push(datas[index][i1] +'-'+ datas[index][i2]);
+        }
+        return kname;
+    }
+
+    $(function () {
+        option = {
+            tooltip: {},
+            legend: {
+                data:['订单数','奖金']
+            },
+            xAxis: {
+                data: splicByIndexs(data1,0,1)
+            },
+            yAxis: {},
+            series: [{
+                name: '订单数',
+                type: 'bar',
+                data: getVByIndex(data1,2)
+            },{
+                name: '奖金',
+                type: 'bar',
+                data: getVByIndex(data1,3)
+            }]
+        };
+
+        option2 = {
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} 份({d}%)"
+            },
+            series : [
+                {
+                    name: '商品销售数',
+                    type: 'pie',
+                    radius : '55%',
+                    center: ['50%', '50%'],
+                    data: getKV(data2),
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        option3 = {
+            xAxis: {
+                type: 'category',
+                data: getK(data3)
+            },
+            yAxis: {
+                type: 'value'
+            },
+            tooltip: {},
+            series: [{
+                data: getV(data3),
+                type: 'line'
+            }]
+        };
+        echarts.init(document.getElementById('chart_1')).setOption(option);
+        echarts.init(document.getElementById('chart_2')).setOption(option2);
+        echarts.init(document.getElementById('chart_3')).setOption(option3);
+    })
+</script>

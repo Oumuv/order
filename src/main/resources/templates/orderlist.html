@@ -9,8 +9,8 @@
         <th>日期</th>
         <th>地区</th>
         <th>人员</th>
-        <th>商品订单</th>
         <th>奖金</th>
+        <th>商品订单</th>
         <th>状态</th>
     </tr>
     </thead>
@@ -19,12 +19,12 @@
         <td th:text="${i.createAt}"></td>
         <td th:text="${i.person.fromArea}"></td>
         <td th:text="${i.person.uName}"></td>
+        <td th:text="${i.award}"></td>
         <td>
             <span th:each="p:${i.products}">
                 <span th:text="${p.pid.pname}+'/'+${p.quantity}"></span>&nbsp;
             </span>
         </td>
-        <td th:text="${i.award}"></td>
         <td th:text="${i.deleted}"></td>
     </tr>
 </table>
@@ -74,7 +74,7 @@
             success: function (data) {
                 var html = "";
                 jQuery.each(data.page, function(i, v) {
-                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
+                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-xs\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
                 });
                 $("#fromArea_div").html(html);
             }
@@ -97,7 +97,7 @@
             success: function (data) {
                 var html = "";
                 jQuery.each(data.page, function(i, v) {
-                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick=\"selectPname(this,'" + v.id + "','" + v.pname +"','" + v.award + "')\">" + v.pname + "</button>&nbsp;";
+                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-xs\" onclick=\"selectPname(this,'" + v.id + "','" + v.pname +"','" + v.award + "')\">" + v.pname + "</button>&nbsp;";
                 });
                 $("#pname_div").html(html);
             }
@@ -126,7 +126,7 @@
             success: function (data) {
                 var html = "";
                 jQuery.each(data.page, function(i, v) {
-                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" onclick=\"selectUname(this,'" + v.id + "','" + v.fromArea + "','" + v.uName + "')\">" + v.fromArea + v.uName + "</button>&nbsp;";
+                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-xs\" onclick=\"selectUname(this,'" + v.id + "','" + v.fromArea + "','" + v.uName + "')\">" + v.fromArea + v.uName + "</button>&nbsp;";
                 });
                 $("#uName_div").html(html);
             }

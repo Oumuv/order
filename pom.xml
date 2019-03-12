@@ -64,6 +64,18 @@
             <version>2.9.2</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        <!-- java常用工具包 https://hutool.cn/docs/#/?id=%E7%AE%80%E4%BB%8B -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>4.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>
