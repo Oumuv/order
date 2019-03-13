@@ -38,12 +38,12 @@
                     <label class="" for="award">奖金</label>
                     <input type="number" class="form-control" name="award" :value="order.award" id="award" disabled placeholder="奖金">
                 </div>
-                <input type="hidden" id="copy_text" :value="order.person.fromArea + '-' + order.person.uName + '-' + order.award"/>
+                <span  id="copy_text" >{{order.person.fromArea + '-' + order.person.uName + '-' + order.award}}</span>
             </form>
         </div>
         <div>
             <input type="hidden" name="oid" id="oid" :value="order.id"/>
-            <button type="button" id="copy_btn" class="btn btn-primary" :disabled="order.status === 5 " >复制信息戳</button>
+            <button type="button" id="copy_btn" class="btn btn-primary" :disabled="order.status === 5 " data-clipboard-target="#copy_text" >复制信息戳</button>
             <button type="button" id="_submit" class="btn btn-success" :disabled="order.status === 5 " >标记为已发送</button>
         </div>
 
@@ -81,12 +81,28 @@
         /**
          * 手动复制信息戳
          */
-        $("#copy_btn").on("click", function () {
+        /*$("#copy_btn").on("click", function () {
             $("#copy_text").select();
             if (document.execCommand('copy')) {
                 document.execCommand('copy');
                 alert('复制成功');
             }
+        });*/
+
+        var clipboard = new ClipboardJS('#copy_btn');
+
+        clipboard.on('success', function(e) {
+            console.log('Action:', e.action);
+            console.log('Text:', e.text);
+            console.log('Trigger:', e.trigger);
+
+            e.clearSelection();
+            alert("复制成功")
+        });
+
+        clipboard.on('error', function(e) {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
         });
     });
 
