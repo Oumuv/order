@@ -1,6 +1,6 @@
 <script src="https://cdn.bootcss.com/jquery.form/4.2.1/jquery.form.min.js"></script>
 
-<div class="modal-dialog modal-md add_div" role="document">
+<div class="modal-dialog modal-md add_div" role="document" id="content_div">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -11,72 +11,82 @@
             <form class="row" id="_form">
                 <div class="form-group col-md-12">
                     <label class="" for="createAt">日期</label>
-                    <input type="date" class="form-control" name="createAt" id="createAt" disabled placeholder="日期">
+                    <input type="date" class="form-control" :value="order.createAt" name="createAt" id="createAt" disabled placeholder="日期">
                 </div>
                 <div class="form-group col-md-6">
                     <label class="" for="fromArea">地区</label>
-                    <input type="text" class="form-control" name="fromArea" id="fromArea" placeholder="地区">
+                    <input type="text" class="form-control" :value="order.person.fromArea" name="fromArea" id="fromArea" disabled placeholder="地区">
                 </div>
                 <div class="form-group col-md-6">
-                    <input type="hidden" name="uid" id="uid">
                     <label class="" for="uName">人员</label>
-                    <input type="text" class="form-control" name="uName" id="uName" placeholder="人员">
+                    <input type="text" class="form-control" :value="order.person.uName" name="uName" id="uName" disabled placeholder="人员">
                 </div>
                 <div class="form-group col-md-12 ">
-                    <label class="" for="pname">商品</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="pname" placeholder="商品名称" data-toggle="popover">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" id="btn_addpro">添加</button>
-                        </span>
-                    </div>
+                    <label class="">商品</label>
                 </div>
                 <div class="form-group row col-md-12 " id="_prolist">
 
                     <div class="col-md-6 " v-for="item in order.products">
                         <div class="input-group input-group-sm _pro_div">
-                            <span class="input-group-addon">{{item.name}}</span>
-                            <input type="hidden" class="_pid" :value="item.id">
-                            <input type="hidden" class="_pname" :value="item.name">
-                            <span class="input-group-btn"  @click="proMinus(item.id)" :id="'pid_'+item.id">
-                                  <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-minus"></span></button>
-                            </span>
-
-                            <input type="number" class="form-control _pcount" :value="item.count" placeholder="数量">
-                            <span class="input-group-btn"  @click="proAdd(item.id)">
-                                  <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-plus"></span></button>
-                            </span>
+                            <span class="input-group-addon">{{item.pid.pname}}</span>
+                            <input type="number" class="form-control _pcount" :value="item.quantity" disabled placeholder="数量">
                         </div>
                     </div>
 
                 </div>
                 <div class="form-group col-md-6">
                     <label class="" for="award">奖金</label>
-                    <input type="number" class="form-control" name="award" :value="award" id="award" placeholder="奖金">
+                    <input type="number" class="form-control" name="award" :value="order.award" id="award" disabled placeholder="奖金">
                 </div>
+                <input type="hidden" id="copy_text" :value="order.person.fromArea + '-' + order.person.uName + '-' + order.award"/>
             </form>
         </div>
-
+        <div>
+            <input type="hidden" name="oid" id="oid" :value="order.id"/>
+            <button type="button" id="copy_btn" class="btn btn-primary" :disabled="order.status === 5 " >复制信息戳</button>
+            <button type="button" id="_submit" class="btn btn-success" :disabled="order.status === 5 " >标记为已发送</button>
+        </div>
 
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            <button type="button" id="_submit" class="btn btn-primary">保存</button>
+            <!--<button type="button" id="_submit" class="btn btn-primary">保存</button>-->
         </div>
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 
 <script th:inline="javascript">
-    var data = [[${item}]];
-    console.log(data);
     $(function () {
 
         var vm = new Vue({
-            el: '#_form',
+            el: '#content_div',
             data: {
                 order:[[${item}]]
             }
+        });
 
+        $("#_submit").on("click", function () {
+            $.get({
+                url: "/other/hb/mark/" + $("#oid").val(),
+                success:function (data) {
+                    if (data.code == "0") {
+                        alert("操作成功！");
+                        window.location.reload();
+                    } else {
+                        alert("操作失败：" + data.msg);
+                    }
+                }
+            })
+        });
 
+        /**
+         * 手动复制信息戳
+         */
+        $("#copy_btn").on("click", function () {
+            $("#copy_text").select();
+            if (document.execCommand('copy')) {
+                document.execCommand('copy');
+                alert('复制成功');
+            }
         });
     });
 

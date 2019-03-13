@@ -2,6 +2,7 @@ package com.oumuv.order.controller;
 
 import cn.hutool.core.util.ImageUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
+import com.oumuv.order.commons.Page;
 import com.oumuv.order.entitys.OrderEntity;
 import com.oumuv.order.service.OrderService;
 import io.swagger.annotations.Api;
@@ -9,7 +10,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.ServletOutputStream;
@@ -19,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,10 +53,10 @@ public class OtherController {
     @RequestMapping("other/hb")
     public String arrangeHB(ModelMap map) {
         List<OrderEntity> byStatus = orderService.findByStatus(0);
-        List<Object[]> result = new ArrayList<>();
+        List<Object[]> result = new LinkedList<>();
         for (OrderEntity entity : byStatus) {
             Object[] o = new Object[4];
-            o[0] = entity.getPerson().getId();
+            o[0] = entity.getId();
             o[1] = entity.getPerson().getFromArea();
             o[2] = entity.getPerson().getuName();
             o[3] = entity.getAward();
@@ -68,12 +73,29 @@ public class OtherController {
         return "hb_detail";
     }
 
-    @RequestMapping()
+    @RequestMapping("other/hb/getdetail")
+    @ResponseBody
     public OrderEntity getOrderEntity(ModelMap map, String id) {
         Optional<OrderEntity> byId = orderService.findById(Long.parseLong(id));
         OrderEntity entity = byId.get();
         map.put("item", entity);
         return entity;
+    }
+
+    @GetMapping("other/hb/mark/{id}")
+    @ApiOperation(value ="标记订单为已发送状态")
+    @ResponseBody
+    public Page marked(@PathVariable(name = "id") String id) {
+        Optional<OrderEntity> byId = orderService.findById(Long.parseLong(id));
+        OrderEntity entity = byId.get();
+        if (entity.getStatus() == 0) {
+            entity.setStatus(5);//标记为已发送红包
+            orderService.save(entity);
+            return new Page();
+        } else {
+            return new Page(entity,"500", "红包已发送，请勿重复发送");
+        }
+
     }
 
     /**

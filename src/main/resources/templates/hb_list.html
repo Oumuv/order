@@ -39,7 +39,7 @@
 <body>
 
 <div class="container-fluid" style="padding: 0px;height: 100%;" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <div class="" style="background: aliceblue;width: 100%;height: 100%;overflow-y:auto;">
+    <div class="" style="width: 100%;height: 100%;overflow-y:auto;">
         <p>红包登记</p>
 
             <table class="table">
@@ -51,12 +51,12 @@
                     <th>操作</th>
                 </tr>
                 </thead>
-                <tr th:each="i:${items}">
+                <tr th:each="i:${items}" class="_table_tr ">
                     <td th:text="${iStat.count}"></td>
                     <td th:text="${i[1]}+'-'+${i[2]}"></td>
                     <td th:text="${i[3]}"></td>
                     <td>
-                        <button type="button" th:onclick="details([[${i[0]}]])">查看</button>
+                        <button type="button" th:onclick="details(this,[[${i[0]}]])">查看</button>
                     </td>
                 </tr>
             </table>
@@ -67,8 +67,12 @@
 
 
 <script>
-    function details(id) {
-        $("#myModal").load("/other/hb/detail?id="+id);
+    function details(obj,id) {
+        $("#myModal").load("/other/hb/detail?id="+id,function () {
+            $('#myModal').modal({keyboard: true});
+            $("._table_tr").removeClass("active");
+            $(obj).closest("._table_tr").addClass("active");
+        });
     }
 </script>
 </body>

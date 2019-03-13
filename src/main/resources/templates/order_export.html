@@ -1,0 +1,51 @@
+<script src="https://cdn.bootcss.com/jquery.form/4.2.1/jquery.form.min.js"></script>
+
+<div class="modal-dialog modal-md add_div" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">导出到EXCEL</h4>
+        </div>
+
+        <div class="modal-body">
+            <form class="row" id="_form" action="/order/export/dates" method="get">
+                <div class="form-group col-md-12">
+                    <label class="" for="start">开始日期：</label>
+                    <input type="date" class="form-control" name="start" id="start" placeholder="日期">
+                </div>
+                <div class="form-group col-md-12">
+                    <label class="" for="end">结束日期：</label>
+                    <input type="date" class="form-control" name="end" id="end" placeholder="日期">
+                </div>
+            </form>
+        </div>
+
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="_submit" class="btn btn-primary">导出</button>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<script>
+
+    $(function () {
+
+        /**
+         * 提交方法
+         */
+        $("#_submit").on("click", function () {
+
+
+            $("#_form").submit();
+        });
+
+
+    });
+
+
+
+
+
+</script>

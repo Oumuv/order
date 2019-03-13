@@ -3,6 +3,7 @@ package com.oumuv.order.service;
 import com.oumuv.order.entitys.OrderEntity;
 import com.oumuv.order.entitys.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * @date: 2019-03-05 16:56
  * @version : V1.0
  */
-public interface OrderService extends JpaRepository<OrderEntity,Long> {
+public interface OrderService extends JpaRepository<OrderEntity,Long> , JpaSpecificationExecutor<OrderEntity> {
 
     /**
      * 查询商品销售总数
@@ -43,6 +44,8 @@ public interface OrderService extends JpaRepository<OrderEntity,Long> {
      */
     @Query(value = "from OrderEntity where status=?1")
     List<OrderEntity> findByStatus(int status);
+
+
 
 
 }

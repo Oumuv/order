@@ -1,6 +1,9 @@
 <div class="btn-group">
     <button type="button" class="btn btn-success" onclick="add()">添加</button>
 </div>
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" onclick="excelExport()">导出数据</button>
+</div>
 
 <table class="table table-striped table-hover" xmlns:th="http://www.w3.org/1999/xhtml">
     <thead>
@@ -11,6 +14,7 @@
         <th>人员</th>
         <th>奖金</th>
         <th>商品订单</th>
+        <th>奖金发放状态</th>
         <th>状态</th>
     </tr>
     </thead>
@@ -25,6 +29,7 @@
                 <span th:text="${p.pid.pname}+'/'+${p.quantity}"></span>&nbsp;
             </span>
         </td>
+        <td th:switch="${i.status}"><span th:case="0" class="label label-danger">未发放</span><span th:case="5" class="label label-success">已发放</span></td>
         <td th:text="${i.deleted}"></td>
     </tr>
 </table>
@@ -32,6 +37,12 @@
 <script>
     function add() {
         $('#myModal').load("/order/add",function(){
+            $('#myModal').modal({keyboard: true});
+        })
+    }
+
+    function excelExport() {
+        $('#myModal').load("/order/export",function(){
             $('#myModal').modal({keyboard: true});
         })
     }
