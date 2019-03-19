@@ -8,6 +8,7 @@ import com.oumuv.order.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,12 @@ import java.util.Optional;
 public class OtherController {
     @Autowired
     private OrderService orderService;
+
+    private static final String localhost = "oumuv.xin";
+
+    @Value("${server.port}")
+    String port;
+
 
     @ApiOperation(value = "跳转其他页面")
     @RequestMapping("other")
@@ -108,16 +115,24 @@ public class OtherController {
         response.setContentType("image/png");
         ServletOutputStream outputStream = null;
         try {
-             outputStream = response.getOutputStream();
-            String localhost;
-            if (session.getAttribute("localhost") == null || StringUtils.isEmpty((String) session.getAttribute("localhost"))) {
-                InetAddress localHost = InetAddress.getLocalHost();
-                localhost = localHost.getHostAddress();
-                session.setAttribute("localhost", localhost);
-            } else {
-                localhost = (String) session.getAttribute("localhost");
+            outputStream = response.getOutputStream();
+            String localhostadr = null;
+            if (localhost != null && !"".equals(localhost)) {
+                localhostadr = localhost;
+            }else {
+                if (session.getAttribute("localhost") == null || StringUtils.isEmpty((String) session.getAttribute("localhost"))) {
+                    InetAddress InetAddress = null;
+                    try {
+                        String localHost = InetAddress.getLocalHost().getHostAddress();
+                        localhostadr = localHost;
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                    session.setAttribute("localhost", localhostadr);
+                }
             }
-            QrCodeUtil.generate("http://" + localhost + ":8080/index", 300, 300, ImageUtil.IMAGE_TYPE_PNG, outputStream);
+
+            QrCodeUtil.generate("http://" + localhostadr + ":" + port + "/index", 300, 300, ImageUtil.IMAGE_TYPE_PNG, outputStream);
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -142,15 +157,22 @@ public class OtherController {
         ServletOutputStream outputStream = null;
         try {
             outputStream = response.getOutputStream();
-            String localhost;
-            if (session.getAttribute("localhost") == null || StringUtils.isEmpty((String) session.getAttribute("localhost"))) {
-                InetAddress localHost = InetAddress.getLocalHost();
-                localhost = localHost.getHostAddress();
-                session.setAttribute("localhost", localhost);
-            } else {
-                localhost = (String) session.getAttribute("localhost");
+            String localhostadr = null;
+            if (localhost != null && !"".equals(localhost)) {
+                localhostadr = localhost;
+            }else {
+                if (session.getAttribute("localhost") == null || StringUtils.isEmpty((String) session.getAttribute("localhost"))) {
+                    InetAddress InetAddress = null;
+                    try {
+                        String localHost = InetAddress.getLocalHost().getHostAddress();
+                        localhostadr = localHost;
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                    session.setAttribute("localhost", localhostadr);
+                }
             }
-            QrCodeUtil.generate("http://" + localhost + ":8080/other/hb", 300, 300, ImageUtil.IMAGE_TYPE_PNG, outputStream);
+            QrCodeUtil.generate("http://" + localhostadr + ":" + port + "/other/hb", 300, 300, ImageUtil.IMAGE_TYPE_PNG, outputStream);
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();

@@ -63,7 +63,7 @@
     });
     var flag = false;
     var timer;
-    //键盘监听事件
+
     $(function () {
         $("#pname").popover({
             placement: "auto",
@@ -73,9 +73,10 @@
         });
 
         $('#pname').on('show.bs.popover', function () {
+            // console.log(jQuery("#pname").val())
             getPname();
         });
-
+        //键盘监听事件
         $('#pname').keydown(function () {
             clearTimeout(timer);
             flag = true;

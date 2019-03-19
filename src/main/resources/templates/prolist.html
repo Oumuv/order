@@ -55,6 +55,8 @@
     }
 
     function getPname() {
+        // console.log($("#pname").val());
+        // return false;
         $.get({
             url: '/product/findall',
             data: {
@@ -63,7 +65,7 @@
             success: function (data) {
                 var html = "";
                 jQuery.each(data.page, function(i, v) {
-                    html = html + "<button type=\"button\" class=\"btn btn-success btn-xs\" >" + v.pname + "</button>&nbsp;";
+                    html = html + "<button type=\"button\" class=\"btn btn-success btn-sm\" >" + v.pname + "</button>&nbsp;";
                 });
                 $("#pname_div").html(html);
             }

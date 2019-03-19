@@ -85,7 +85,7 @@
             success: function (data) {
                 var html = "";
                 jQuery.each(data.page, function(i, v) {
-                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-xs\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
+                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-sm\" onclick='selectFromArea(this)'>" + v + "</button>&nbsp;";
                 });
                 $("#fromArea_div").html(html);
             }
@@ -108,7 +108,7 @@
             success: function (data) {
                 var html = "";
                 jQuery.each(data.page, function(i, v) {
-                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-xs\" onclick=\"selectPname(this,'" + v.id + "','" + v.pname +"','" + v.award + "')\">" + v.pname + "</button>&nbsp;";
+                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-sm\" onclick=\"selectPname(this,'" + v.id + "','" + v.pname +"','" + v.award + "')\">" + v.pname + "</button>&nbsp;";
                 });
                 $("#pname_div").html(html);
             }
@@ -137,7 +137,7 @@
             success: function (data) {
                 var html = "";
                 jQuery.each(data.page, function(i, v) {
-                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-xs\" onclick=\"selectUname(this,'" + v.id + "','" + v.fromArea + "','" + v.uName + "')\">" + v.fromArea + v.uName + "</button>&nbsp;";
+                    html = html + "<button type=\"button\" style=\"margin-bottom: 5px;\" class=\"btn btn-success btn-sm\" onclick=\"selectUname(this,'" + v.id + "','" + v.fromArea + "','" + v.uName + "')\">" + v.fromArea + v.uName + "</button>&nbsp;";
                 });
                 $("#uName_div").html(html);
             }

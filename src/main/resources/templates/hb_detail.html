@@ -38,7 +38,7 @@
                     <label class="" for="award">奖金</label>
                     <input type="number" class="form-control" name="award" :value="order.award" id="award" disabled placeholder="奖金">
                 </div>
-                <span  id="copy_text" >{{order.person.fromArea + '-' + order.person.uName + '-' + order.award}}</span>
+                <span  id="copy_text" >{{ order.person.uName + '-' + order.award}}</span>
             </form>
         </div>
         <div>
