@@ -8,8 +8,10 @@ import com.oumuv.order.service.ProductService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,23 +44,29 @@ public class IndexController {
 
 
     @RequestMapping("content")
-    public String content(ModelMap map, HttpSession session, HttpServletRequest request) {
-        String contextPath = session.getServletContext().getRealPath("/");
-        String contextPath2 = session.getServletContext().getContextPath();
-        String contextPath1 = request.getServletContext().getContextPath();
+    public String content(ModelMap map) {
         map.put("option1_data", orderService.get30DatesDateByUname());
         map.put("option2_data", orderService.getCollect());
         map.put("option3_data", orderService.get30DatesData());
-//        try {
-//            InetAddress localHost = InetAddress.getLocalHost();
-//            String s = localHost.toString();
-            // 生成指定url对应的二维码到文件，宽和高都是300像素
-//            QrCodeUtil.generate(s+"/index/", 300, 300);
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-//        }
         return "index_content";
     }
+
+    @RequestMapping("getdate1")
+    @ResponseBody
+    public List<Object[]> getDate1(String start, String end) {
+        return orderService.getCollect(start,end);
+    }
+
+    @RequestMapping("getdate2")
+    @ResponseBody
+    public List<Object[]> getDate2(String start, String end) {
+        List<Object[]> collect = orderService.getCollect(start, end);
+        return collect;
+    }
+
+
+
+
 
 
 }

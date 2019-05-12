@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -26,6 +27,9 @@ public interface OrderService extends JpaRepository<OrderEntity,Long> , JpaSpeci
      */
     @Query(value = "SELECT p.pname,sum(op.quantity) FROM t_product p JOIN order_product op ON op.pid_id=p.id WHERE p.deleted=0 GROUP BY p.id",nativeQuery = true)
     List<Object[]> getCollect();
+
+    @Query(value = "SELECT p.pname,sum(op.quantity) FROM t_product p INNER JOIN order_product op ON op.pid_id=p.id INNER JOIN t_order o ON o.ID=op.oid WHERE p.deleted=0 AND o.create_at BETWEEN :start AND :end GROUP BY p.id",nativeQuery = true)
+    List<Object[]> getCollect(@Param("start") String start, @Param("end")String end);
 
     /**
      * 获取近30天的销售数量

@@ -12,8 +12,6 @@ import com.oumuv.order.service.OrderService;
 import com.oumuv.order.service.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /***
  *<pre>
@@ -61,6 +60,20 @@ public class OrderController extends AbstractController {
 //        Pageable pageable1 = new QPageRequest()
         Iterable<OrderEntity> all = orderService.findAll(pageable);
         map.put("items", all);
+
+//        List<String> list = new LinkedList<>();
+//        List<String> list2 = new ArrayList<>();
+//        List<String> list3 = new Vector<>();
+//        Collection<String> strings = Collections.synchronizedCollection(list);
+
+        Set<String> set = new HashSet<>();
+        Set<String> set2 = new TreeSet<>();
+        Set<String> set3 = new LinkedHashSet<>();
+
+        Map<String, String> map1 = new HashMap<>();
+        Map<String, String> map2 = new LinkedHashMap<>();
+        Map<String, String> map3 = new Hashtable<>();
+        Map<String, String> map4 = new ConcurrentHashMap<>();
         return "orderlist";
     }
 

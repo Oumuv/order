@@ -1,8 +1,23 @@
-<div class="" style="margin-top: 20px;" xmlns:th="http://www.w3.org/1999/xhtml" >
+<div id="app" class="" style="margin-top: 20px;" xmlns:th="http://www.w3.org/1999/xhtml" >
     <div class="col-md-8 col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4>近30天销售排行</h4>
+            </div>
+            <div class="block">
+                <div class="block">
+                    <el-date-picker
+                            v-model="date1"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions"
+                            value-format="yyyy-MM-dd"
+                            format="yyyy-MM-dd">
+                    </el-date-picker>
+                    <el-button icon="el-icon-search" circle onClick="getDate1()"></el-button>
+                </div>
             </div>
             <div class="panel-body" >
                 <div id="chart_1" style="width: 100%;height:350px;">>
@@ -15,8 +30,24 @@
     <div class="col-md-4 col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4>商品销售总数（占比）</h4>
+                <h4>商品销售总数（占比）{{date2[0]}}</h4>
             </div>
+            <div class="block">
+                <div class="block">
+                    <el-date-picker
+                            v-model="date2"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions"
+                            value-format="yyyy-MM-dd"
+                            format="yyyy-MM-dd">
+                    </el-date-picker>
+                    <el-button icon="el-icon-search" circle onClick="getDate2()"></el-button>
+                </div>
+            </div>
+
             <div class="panel-body">
                 <div id="chart_2" style="width: 100%;height:350px;">>
 
@@ -42,6 +73,50 @@
 
 <script th:inline="javascript">
 
+    var app = new Vue({
+        el: '#app',
+        data: {
+            date1: '',
+            date2: '',
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
+        },
+        methods: {
+            getDate1() {
+                var _this = this;
+                getDate1();
+            },
+            getDate2() {
+                var _this = this;
+                getDate2();
+            }
+        }
+    })
     var data1 = [[${option1_data}]];//
     var data2 = [[${option2_data}]];//商品销售总数量
     var data3 = [[${option3_data}]];//
@@ -88,7 +163,7 @@
      */
     function getVByIndex(datas,i) {
         var kname = [];
-        console.log(datas)
+        // console.log(datas)
         for (var index in datas) {
             kname.push(datas[index][i])
         }
@@ -104,7 +179,7 @@
      */
     function splicByIndexs(datas,i1,i2) {
         var kname = [];
-        console.log(datas)
+        // console.log(datas)
         for (var index in datas) {
             kname.push(datas[index][i1] +'-'+ datas[index][i2]);
         }
@@ -187,7 +262,62 @@
             }]
         };
         echarts.init(document.getElementById('chart_1')).setOption(option);
-        echarts.init(document.getElementById('chart_2')).setOption(option2);
+        echarts2 = echarts.init(document.getElementById('chart_2'));
+        echarts2.setOption(option2);
         echarts.init(document.getElementById('chart_3')).setOption(option3);
+
+
+
     })
+    function getDate1(){
+        $.ajax({
+            type: 'post',
+            url: '/getdate1',
+            data:{'start':app.date1[0],'end':app.date1[1]},
+            success: function(data){
+                data1 = data;
+                option.xAxis.data = splicByIndexs(data1, 0, 1);
+                option.xAxis.series[0].data = getVByIndex(data1,2);
+                option.xAxis.series[1].data = getVByIndex(data1,3);
+                echarts.init(document.getElementById('chart_1')).setOption(option);
+            }
+        });
+
+    }
+    function getDate2(){
+        $.ajax({
+            type: 'post',
+            url: '/getdate2',
+            data:{'start':app.date2[0],'end':app.date2[1]},
+            success: function(data){
+                // option2.series.data = getKV(data);
+                var option = {
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} 份({d}%)"
+                    },
+                    series : [
+                        {
+                            name: '商品销售数',
+                            type: 'pie',
+                            radius : '55%',
+                            center: ['50%', '50%'],
+                            data: getKV(data),
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                console.log(option);
+                echarts2.clear();
+                echarts2.setOption(option);
+            }
+        });
+
+    }
 </script>
